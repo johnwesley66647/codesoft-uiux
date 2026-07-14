@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zaffran – Restaurant Menu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:      #1C1A16;
+      --gold:     #C9943A;
+      --gold-lt:  #E8C87A;
+      --cream:    #FAF7F2;
+      --paper:    #F3EDE3;
+      --muted:    #7A6F60;
+      --border:   #E2D9CC;
+      --spice:    #A63D2F;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--ink);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      border-bottom: 1px solid rgba(201,148,58,0.3);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+    }
+    .nav-logo span { color: #fff; font-weight: 400; font-style: italic; }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-reserve {
+      background: var(--gold);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 9px 20px;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .nav-reserve:hover { background: var(--gold-lt); }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--ink);
+      min-height: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 80px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 100%, rgba(201,148,58,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    /* decorative ring */
+    .hero-ring {
+      position: absolute;
+      width: 420px; height: 420px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,148,58,0.12);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .hero-ring:nth-child(2) { width: 600px; height: 600px; border-color: rgba(201,148,58,0.06); }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(52px, 8vw, 88px);
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.0;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    .hero-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .hero-divider {
+      width: 48px; height: 1px;
+      background: var(--gold);
+      margin: 0 auto 24px;
+      opacity: 0.6;
+    }
+    .hero-desc {
+      font-size: 15px;
+      color: rgba(255,255,255,0.5);
+      max-width: 380px;
+      line-height: 1.8;
+    }
+
+    /* ── CATEGORY TABS ── */
+    .tab-bar {
+      background: var(--paper);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+      position: sticky;
+      top: 64px;
+      z-index: 90;
+    }
+    .tab-bar::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      padding: 16px 28px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .tab-btn:hover { color: var(--ink); }
+    .tab-btn.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+
+    /* ── SECTION ── */
+    .menu-section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 64px 24px;
+      display: none;
+    }
+    .menu-section.active { display: block; }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .section-header .eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+    .section-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 42px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.1;
+    }
+    .section-header h2 em { font-style: italic; color: var(--spice); }
+
+    /* ── MENU GRID ── */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    /* ── DISH CARD ── */
+    .dish-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow 0.25s, transform 0.25s;
+    }
+    .dish-card:hover {
+      box-shadow: 0 8px 32px rgba(28,26,22,0.1);
+      transform: translateY(-2px);
+    }
+    .dish-card.featured {
+      grid-column: span 2;
+      flex-direction: row;
+    }
+    .dish-img {
+      font-size: 56px;
+      background: var(--paper);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .dish-card:not(.featured) .dish-img {
+      height: 140px;
+    }
+    .dish-card.featured .dish-img {
+      width: 240px;
+      font-size: 72px;
+    }
+    .dish-body {
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .dish-tags {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 2px;
+    }
+    .tag-chef    { background: rgba(201,148,58,0.12); color: var(--gold); }
+    .tag-spicy   { background: rgba(166,61,47,0.1);  color: var(--spice); }
+    .tag-veg     { background: rgba(74,133,75,0.1);  color: #3A7A3B; }
+    .tag-new     { background: rgba(28,26,22,0.07);  color: var(--ink); }
+
+    .dish-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+    .dish-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
+      flex: 1;
+      margin-bottom: 16px;
+    }
+    .dish-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .dish-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .dish-price sup {
+      font-size: 13px;
+      font-weight: 600;
+      vertical-align: super;
+    }
+    .add-btn {
+      width: 32px; height: 32px;
+      background: var(--ink);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .add-btn:hover { background: var(--gold); }
+
+    /* ── SEPARATOR ── */
+    .ornament {
+      text-align: center;
+      margin: 48px 0 0;
+      color: var(--border);
+      font-size: 22px;
+      letter-spacing: 12px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      padding: 48px 40px;
+      text-align: center;
+    }
+    footer .f-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+    footer p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.35);
+      line-height: 1.8;
+    }
+    footer .f-divider {
+      width: 40px; height: 1px;
+      background: var(--gold);
+      opacity: 0.4;
+      margin: 20px auto;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      nav { padding: 0 16px; }
+      .nav-links { display: none; }
+      .menu-grid { grid-template-columns: 1fr; }
+      .dish-card.featured { flex-direction: column; grid-column: span 1; }
+      .dish-card.featured .dish-img { width: 100%; height: 140px; }
+      .tab-btn { padding: 14px 18px; font-size: 11px; }
+      footer { padding: 40px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Zaffran <span>Kitchen</span></div>
+  <ul class="nav-links">
+    <li><a href="#">Our Story</a></li>
+    <li><a href="#">Menu</a></li>
+    <li><a href="#">Events</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <a href="#" class="nav-reserve">Reserve a Table</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-ring"></div>
+  <div class="hero-ring"></div>
+  <p class="hero-eyebrow">Est. 2018 · Hyderabad, India</p>
+  <h1>Where spice<br/>meets <em>soul.</em></h1>
+  <p class="hero-sub">Modern Indian Fine Dining</p>
+  <div class="hero-divider"></div>
+  <p class="hero-desc">Every dish is a memory — drawn from regional kitchens, refined for the modern table.</p>
+</section>
+
+<!-- CATEGORY TABS -->
+<div class="tab-bar" id="tabBar">
+  <button class="tab-btn active" onclick="showSection('starters', this)">Starters</button>
+  <button class="tab-btn" onclick="showSection('mains', this)">Main Course</button>
+  <button class="tab-btn" onclick="showSection('breads', this)">Breads & Rice</button>
+  <button class="tab-btn" onclick="showSection('desserts', this)">Desserts</button>
+  <button class="tab-btn" onclick="showSection('drinks', this)">Drinks</button>
+</div>
+
+<!-- STARTERS -->
+<section class="menu-section active" id="starters">
+  <div class="section-header">
+    <div class="eyebrow">To Begin</div>
+    <h2>Small Plates &amp; <em>Starters</em></h2>
+  </div>
+  <div class="menu-grid">
+
+    <div class="dish-card featured">
+      <div class="dish-img">🥘</div>
+      <div class="dish-body">
+        <div class="dish-tags">
+          <span class="tag tag-chef">Chef's Pick</span>
+          <span class="tag tag-spicy">Spicy</span>
+        </div>
+        <div class="dish-name">Zaffran Seekh Kebab</div>
+        <div class="dish-desc">Hand-minced lamb with house-blended spices, charred in the tandoor and served on a sizzler with mint chutney and pickled onions. Our signature since day one.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>520</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-img">🧀</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-veg">Veg</span></div>
+        <div class="dish-name">Paneer Tikka</div>
+        <div class="dish-desc">Marinated cottage cheese cubes, grilled with peppers and onions in the tandoor.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>380</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-img">🍤</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-new">New</span><span class="tag tag-spicy">Spicy</span></div>
+        <div class="dish-name">Coastal Prawn Fry</div>
+        <div class="dish-desc">Kerala-style prawns with curry leaves, mustard seeds and coconut crumble.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>620</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-img">🥗</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-veg">Veg</span></div>
+        <div class="dish-name">Papdi Chaat</div>
+        <div class="dish-desc">Crispy wafers layered with chickpeas, yogurt, tamarind and fresh coriander.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>260</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-img">🍗</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-chef">Chef's Pick</span></div>
+        <div class="dish-name">Murgh Malai Tikka</div>
+        <div class="dish-desc">Chicken breast marinated in cream cheese and mild spices, slow-roasted to perfection.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>440</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="ornament">✦ ✦ ✦</div>
+</section>
+
+<!-- MAINS -->
+<section class="menu-section" id="mains">
+  <div class="section-header">
+    <div class="eyebrow">The Heart of the Meal</div>
+    <h2>Main <em>Course</em></h2>
+  </div>
+  <div class="menu-grid">
+
+    <div class="dish-card featured">
+      <div class="dish-img">🍛</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-chef">Chef's Pick</span><span class="tag tag-spicy">Spicy</span></div>
+        <div class="dish-name">Hyderabadi Dum Gosht</div>
+        <div class="dish-desc">Slow-cooked mutton sealed under a dough lid with caramelised onions, saffron, and whole spices. Rested for 4 hours before service — the dish this city is built on.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>780</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-img">🍲</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-veg">Veg</span></div>
+        <div class="dish-name">Dal Makhani</div>
+        <div class="dish-desc">Black lentils simmered overnight with butter and tomato. Slow food, done right.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>340</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-img">🐔</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-new">New</span></div>
+        <div class="dish-name">Butter Chicken</div>
+        <div class="dish-desc">Tandoori chicken in a rich, velvety tomato-cashew gravy with kasuri methi.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>560</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-img">🌿</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-veg">Veg</span></div>
+        <div class="dish-name">Palak Paneer</div>
+        <div class="dish-desc">Fresh spinach puree with soft paneer cubes, ginger and a touch of cream.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>360</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-img">🦐</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-spicy">Spicy</span></div>
+        <div class="dish-name">Goan Prawn Curry</div>
+        <div class="dish-desc">Tiger prawns in a coconut and raw mango gravy. Best paired with Goan rice.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>720</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="ornament">✦ ✦ ✦</div>
+</section>
+
+<!-- BREADS & RICE -->
+<section class="menu-section" id="breads">
+  <div class="section-header">
+    <div class="eyebrow">Accompaniments</div>
+    <h2>Breads &amp; <em>Rice</em></h2>
+  </div>
+  <div class="menu-grid">
+
+    <div class="dish-card featured">
+      <div class="dish-img">🍚</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-chef">Chef's Pick</span></div>
+        <div class="dish-name">Zaffran Biryani</div>
+        <div class="dish-desc">Long-grain basmati layered with slow-cooked mutton, crispy onions, saffron milk and rose water. Sealed and baked. Served with raita and mirchi ka salan.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>680</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-img">🫓</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-veg">Veg</span></div>
+        <div class="dish-name">Garlic Naan</div>
+        <div class="dish-desc">Leavened bread with roasted garlic and butter, baked in the tandoor.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>80</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-img">🥙</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-veg">Veg</span></div>
+        <div class="dish-name">Laccha Paratha</div>
+        <div class="dish-desc">Multi-layered whole wheat flatbread, flaky and golden from the griddle.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>70</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-img">🍙</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-veg">Veg</span></div>
+        <div class="dish-name">Jeera Rice</div>
+        <div class="dish-desc">Basmati rice tempered with cumin seeds, ghee and fresh coriander.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>180</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="ornament">✦ ✦ ✦</div>
+</section>
+
+<!-- DESSERTS -->
+<section class="menu-section" id="desserts">
+  <div class="section-header">
+    <div class="eyebrow">Sweet Endings</div>
+    <h2>Indian <em>Desserts</em></h2>
+  </div>
+  <div class="menu-grid">
+
+    <div class="dish-card featured">
+      <div class="dish-img">🍮</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-chef">Chef's Pick</span><span class="tag tag-veg">Veg</span></div>
+        <div class="dish-name">Saffron Phirni</div>
+        <div class="dish-desc">Chilled ground rice pudding set in earthen pots with saffron, cardamom and rose petals. A dessert that smells as good as it tastes.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>220</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-img">🍨</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-veg">Veg</span></div>
+        <div class="dish-name">Kulfi Falooda</div>
+        <div class="dish-desc">Dense pistachio ice cream on a bed of rose milk, vermicelli and basil seeds.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>180</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-img">🍰</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-new">New</span><span class="tag tag-veg">Veg</span></div>
+        <div class="dish-name">Gulab Jamun Cheesecake</div>
+        <div class="dish-desc">A fusion dessert — classic cheesecake topped with warm gulab jamun and cardamom syrup.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>260</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="ornament">✦ ✦ ✦</div>
+</section>
+
+<!-- DRINKS -->
+<section class="menu-section" id="drinks">
+  <div class="section-header">
+    <div class="eyebrow">To Sip</div>
+    <h2>Drinks &amp; <em>Beverages</em></h2>
+  </div>
+  <div class="menu-grid">
+
+    <div class="dish-card featured">
+      <div class="dish-img">🥤</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-chef">Chef's Pick</span><span class="tag tag-veg">Veg</span></div>
+        <div class="dish-name">Rose Thandai</div>
+        <div class="dish-desc">Cold-steeped milk blended with almonds, fennel, poppy seeds, rose and saffron. A drink rooted in Holi tradition — served all year long because people wouldn't let us take it off.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>180</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-img">🍋</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-veg">Veg</span></div>
+        <div class="dish-name">Nimbu Pani</div>
+        <div class="dish-desc">Fresh lime water with black salt, roasted cumin and mint. Classic and crisp.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>90</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-img">🥛</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-veg">Veg</span></div>
+        <div class="dish-name">Mango Lassi</div>
+        <div class="dish-desc">Thick Alphonso mango blended with chilled yogurt and a pinch of cardamom.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>160</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dish-card">
+      <div class="dish-img">☕</div>
+      <div class="dish-body">
+        <div class="dish-tags"><span class="tag tag-veg">Veg</span></div>
+        <div class="dish-name">Masala Chai</div>
+        <div class="dish-desc">Strong Assam tea brewed with ginger, cardamom, cloves and cinnamon. Served hot.</div>
+        <div class="dish-footer">
+          <div class="dish-price"><sup>₹</sup>80</div>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="ornament">✦ ✦ ✦</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-logo">Zaffran</div>
+  <div class="f-divider"></div>
+  <p>
+    Plot 42, Banjara Hills Road No. 12, Hyderabad · Open daily 12pm – 11pm<br/>
+    Reservations: +91 98765 43210 · hello@zaffran.in
+  </p>
+</footer>
+
+<script>
+  function showSection(id, btn) {
+    document.querySelectorAll('.menu-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
